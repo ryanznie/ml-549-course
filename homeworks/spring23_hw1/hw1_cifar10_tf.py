@@ -30,7 +30,7 @@ if __name__ == '__main__':
     wandb.init(
         project="hw1_spring2023",  # Leave this as 'hw1_spring2023'
         entity="bu-spark-ml",  # Leave this
-        group="<your_BU_username>",  # <<<<<<< Put your BU username here
+        group="ryanznie",  # <<<<<<< Put your BU username here
         notes="Minimal model"  # <<<<<<< You can put a short note here
     )
 
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     (ds_cifar10_train, ds_cifar10_test), ds_cifar10_info = tfds.load(
         'cifar10',
         split=['train', 'test'],
-        data_dir='/projectnb/ds549/datasets/tensorflow_datasets',
+        data_dir='./tensorflow_dataset', # creating dir in spring23_hw1 folder
         shuffle_files=True, # load in random order
         as_supervised=True, # Include labels
         with_info=True, # Include info
@@ -68,12 +68,12 @@ if __name__ == '__main__':
     ds_cifar10_train = ds_cifar10_train.map(normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
     ds_cifar10_train = ds_cifar10_train.cache()     # Cache data
     ds_cifar10_train = ds_cifar10_train.shuffle(ds_cifar10_info.splits['train'].num_examples)
-    ds_cifar10_train = ds_cifar10_train.batch(32)  # <<<<< To change batch size, you have to change it here
+    ds_cifar10_train = ds_cifar10_train.batch(128)  # <<<<< To change batch size, you have to change it here
     ds_cifar10_train = ds_cifar10_train.prefetch(tf.data.AUTOTUNE)
 
     # Prepare cifar10 test dataset
     ds_cifar10_test = ds_cifar10_test.map(normalize_img, num_parallel_calls=tf.data.AUTOTUNE)
-    ds_cifar10_test = ds_cifar10_test.batch(32)    # <<<<< To change batch size, you have to change it here
+    ds_cifar10_test = ds_cifar10_test.batch(128)    # <<<<< To change batch size, you have to change it here
     ds_cifar10_test = ds_cifar10_test.cache()
     ds_cifar10_test = ds_cifar10_test.prefetch(tf.data.AUTOTUNE)
 
@@ -84,8 +84,19 @@ if __name__ == '__main__':
         # Edit code here -- Update the model definition
         # You will need a dense last layer with 10 output channels to classify the 10 classes
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
+        layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
+        layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
+        layers.MaxPooling2D(pool_size=(2,2)),
+        layers.Conv2D(128, kernel_size=(3,3), activation='relu'),
+        layers.Conv2D(128, kernel_size=(3,3), activation='relu'),
+        layers.MaxPooling2D(pool_size=(2,2)),
+
         layers.Flatten(),
+        layers.Dropout(0.5),
         layers.Dense(128, activation='relu'),
+        layers.Dense(64, activation='relu'),
+        layers.Dense(32, activation='relu'),
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         tf.keras.layers.Dense(10)
     ])
@@ -98,8 +109,8 @@ if __name__ == '__main__':
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         "learning_rate": 0.001,
         "optimizer": "adam",
-        "epochs": 5,
-        "batch_size": 32
+        "epochs": 30,
+        "batch_size": 64 # CHANGED BATCH SIZE
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     }
 
@@ -111,7 +122,7 @@ if __name__ == '__main__':
 
     history = model.fit(
         ds_cifar10_train,
-        epochs=5,
+        epochs=30,
         validation_data=ds_cifar10_test,
         callbacks=[WandbMetricsLogger()]
     )
