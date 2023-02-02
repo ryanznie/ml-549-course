@@ -86,17 +86,18 @@ if __name__ == '__main__':
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
         layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
-        layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
         layers.MaxPooling2D(pool_size=(2,2)),
+        layers.Dropout(0.3),
         layers.Conv2D(128, kernel_size=(3,3), activation='relu'),
         layers.Conv2D(128, kernel_size=(3,3), activation='relu'),
         layers.MaxPooling2D(pool_size=(2,2)),
+        layers.Dropout(0.3),
 
         layers.Flatten(),
         layers.Dropout(0.5),
+        layers.Dense(256, activation='relu'),
         layers.Dense(128, activation='relu'),
         layers.Dense(64, activation='relu'),
-        layers.Dense(32, activation='relu'),
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         tf.keras.layers.Dense(10)
     ])
@@ -109,8 +110,8 @@ if __name__ == '__main__':
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         "learning_rate": 0.001,
         "optimizer": "adam",
-        "epochs": 30,
-        "batch_size": 64 # CHANGED BATCH SIZE
+        "epochs": 20,
+        "batch_size": 128 # CHANGED BATCH SIZE
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     }
 
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 
     history = model.fit(
         ds_cifar10_train,
-        epochs=30,
+        epochs=20,
         validation_data=ds_cifar10_test,
         callbacks=[WandbMetricsLogger()]
     )
