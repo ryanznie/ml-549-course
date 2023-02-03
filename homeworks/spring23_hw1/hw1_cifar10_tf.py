@@ -84,20 +84,18 @@ if __name__ == '__main__':
         # Edit code here -- Update the model definition
         # You will need a dense last layer with 10 output channels to classify the 10 classes
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-        layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
-        layers.Conv2D(64, kernel_size=(3,3), activation='relu'),
+        layers.Conv2D(128, kernel_size=(3,3), activation='gelu'),
+        layers.Conv2D(128, kernel_size=(3,3), activation='gelu'),
         layers.MaxPooling2D(pool_size=(2,2)),
         layers.Dropout(0.3),
-        layers.Conv2D(128, kernel_size=(3,3), activation='relu'),
-        layers.Conv2D(128, kernel_size=(3,3), activation='relu'),
+        layers.Conv2D(256, kernel_size=(3,3), activation='gelu'),
+        layers.Conv2D(256, kernel_size=(3,3), activation='gelu'),
         layers.MaxPooling2D(pool_size=(2,2)),
         layers.Dropout(0.3),
 
+        # fully connected layers
         layers.Flatten(),
         layers.Dropout(0.5),
-        layers.Dense(256, activation='relu'),
-        layers.Dense(128, activation='relu'),
-        layers.Dense(64, activation='relu'),
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         tf.keras.layers.Dense(10)
     ])
